@@ -26,7 +26,7 @@ jobs:
            -e TG_CHAT_ID='${{secrets.TG_CHAT_ID}}' \
            -e GPG_KEY='.mt/key.gpg' \
            -e GPG_PASSWORD="${GPG_PASSWORD}" \
-           -id --name container 'docker.io/kepocnhh/multitool-0.14.0-amd64:3a'
+           -id --name container 'docker.io/kepocnhh/multitool-bash-amd64:bash-4-a'
           docker exec container /usr/local/bin/bash -c 'echo "${{secrets.KEYSTORE_RELEASE}}" | base64 -d > ${KEYSTORE}'
           docker exec container /usr/local/bin/bash -c 'echo "${{secrets.GPG_KEY}}" > "${GPG_KEY}"'
           docker exec container /usr/local/bin/bash -c '$mt/bash/pr.sh'
