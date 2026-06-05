@@ -3,9 +3,9 @@
 ISSUER='build/yml/metadata.yml'
 . $asserts/files/not_empty.sh "${ISSUER}"
 
-VERSION="$(yq -erM -p=yml -o=json .version "${ISSUER}")" || exit 1
-REP_OWNER="$(yq -erM -p=yml -o=json .repository.owner "${ISSUER}")" || exit 1
-REP_NAME="$(yq -erM -p=yml -o=json .repository.name "${ISSUER}")" || exit 1
+VERSION="$(yq -Mer -p=yml -o=json .version "${ISSUER}")" || exit 1
+REP_OWNER="$(yq -Mer -p=yml -o=json .repository.owner "${ISSUER}")" || exit 1
+REP_NAME="$(yq -Mer -p=yml -o=json .repository.name "${ISSUER}")" || exit 1
 
 ISSUER='README.md'
 . $asserts/files/not_empty.sh "${ISSUER}"
@@ -27,8 +27,6 @@ EXPECTED_TEXTS=(
  "${EXPECTED_BUILD_AND_INSTALL}"
  "${EXPECTED_DOWNLOAD_AND_INSTALL}"
 )
-
-# todo $asserts/files/contains.sh
 for EXPECTED_TEXT in "${EXPECTED_TEXTS[@]}"; do
- . $asserts/strings/contains.sh "${ISSUER}" "$(< "${ISSUER}")" "${EXPECTED_TEXT}"
+ . $asserts/files/contains.sh "${ISSUER}" "${EXPECTED_TEXT}"
 done
