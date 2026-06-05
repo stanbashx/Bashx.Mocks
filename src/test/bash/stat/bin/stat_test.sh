@@ -18,7 +18,7 @@ PATH="src/main/bash/stat/bin:${PATH}" \
 . $asserts/strings/eq.sh "${SCRIPT}" "$(<"${STDERR}")" ''
 . $asserts/strings/eq.sh "${SCRIPT}" "$(<"${STDOUT}")" ''
 
-EXIT_CODES=('x' '01' $'0\n')
+EXIT_CODES=(0 256 'x' '01' $'0\n')
 for MOCKS_STAT_EXIT_CODE in "${EXIT_CODES[@]}"; do
  :> "${STDERR}"
  :> "${STDOUT}"
