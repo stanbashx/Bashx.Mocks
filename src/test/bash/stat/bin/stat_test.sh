@@ -12,7 +12,8 @@ if ! /usr/local/bin/bash -n "${SCRIPT}"; then
 STDERR="$(mktemp)"
 STDOUT="$(mktemp)"
 
-"${SCRIPT}" >"${STDOUT}" 2>"${STDERR}"
+PATH="src/main/bash/stat/bin:${PATH}" \
+ stat >"${STDOUT}" 2>"${STDERR}"
 . $asserts/strings/eq.sh "${SCRIPT}" "$?" '0'
 . $asserts/strings/eq.sh "${SCRIPT}" "$(<"${STDERR}")" ''
 . $asserts/strings/eq.sh "${SCRIPT}" "$(<"${STDOUT}")" ''
@@ -20,8 +21,9 @@ STDOUT="$(mktemp)"
 :> "${STDERR}"
 :> "${STDOUT}"
 
+PATH="src/main/bash/stat/bin:${PATH}" \
 MOCKS_STAT_EXIT_CODE='x' \
- "${SCRIPT}" >"${STDOUT}" 2>"${STDERR}"
+ stat >"${STDOUT}" 2>"${STDERR}"
 . $asserts/strings/eq.sh "${SCRIPT}" "$?" '1'
 . $asserts/strings/eq.sh "${SCRIPT}" "$(<"${STDERR}")" 'Wrong exit code!'
 . $asserts/strings/eq.sh "${SCRIPT}" "$(<"${STDOUT}")" ''
@@ -29,8 +31,9 @@ MOCKS_STAT_EXIT_CODE='x' \
 :> "${STDERR}"
 :> "${STDOUT}"
 
+PATH="src/main/bash/stat/bin:${PATH}" \
 MOCKS_STAT_EXIT_CODE='2' \
- "${SCRIPT}" >"${STDOUT}" 2>"${STDERR}"
+ stat >"${STDOUT}" 2>"${STDERR}"
 . $asserts/strings/eq.sh "${SCRIPT}" "$?" '2'
 . $asserts/strings/eq.sh "${SCRIPT}" "$(<"${STDERR}")" ''
 . $asserts/strings/eq.sh "${SCRIPT}" "$(<"${STDOUT}")" ''
@@ -38,8 +41,9 @@ MOCKS_STAT_EXIT_CODE='2' \
 :> "${STDERR}"
 :> "${STDOUT}"
 
+PATH="src/main/bash/stat/bin:${PATH}" \
 MOCKS_STAT_SIZE='3' \
- "${SCRIPT}" >"${STDOUT}" 2>"${STDERR}"
+ stat >"${STDOUT}" 2>"${STDERR}"
 . $asserts/strings/eq.sh "${SCRIPT}" "$?" '0'
 . $asserts/strings/eq.sh "${SCRIPT}" "$(<"${STDERR}")" ''
 . $asserts/strings/eq.sh "${SCRIPT}" "$(<"${STDOUT}")" '3'
