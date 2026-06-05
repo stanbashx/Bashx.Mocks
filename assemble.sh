@@ -2,7 +2,7 @@
 
 REP_OWNER='StanleyProjects'
 REP_NAME='Mocks'
-VERSION='0.0.1'
+VERSION='0.0.2'
 
 if [[ -d 'build' ]]; then
  echo 'Build dir exists!'; exit 1; fi
