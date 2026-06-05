@@ -48,5 +48,13 @@ MOCKS_STAT_SIZE='3' \
 . $asserts/strings/eq.sh "${SCRIPT}" "$(<"${STDERR}")" ''
 . $asserts/strings/eq.sh "${SCRIPT}" "$(<"${STDOUT}")" '3'
 
+PATH="src/main/bash/stat/bin:${PATH}" \
+MOCKS_STAT_EXIT_CODE='2' \
+MOCKS_STAT_SIZE='3' \
+ stat >"${STDOUT}" 2>"${STDERR}"
+. $asserts/strings/eq.sh "${SCRIPT}" "$?" '2'
+. $asserts/strings/eq.sh "${SCRIPT}" "$(<"${STDERR}")" ''
+. $asserts/strings/eq.sh "${SCRIPT}" "$(<"${STDOUT}")" ''
+
 rm "${STDERR}"
 rm "${STDOUT}"
