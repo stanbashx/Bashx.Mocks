@@ -8,5 +8,4 @@ if [[ -n "${MOCKS_STAT_EXIT_CODE}" ]]; then
  fi
 fi
 
-
 printf '%s' "${MOCKS_STAT_SIZE}"

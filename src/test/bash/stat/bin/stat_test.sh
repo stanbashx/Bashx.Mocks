@@ -40,15 +40,17 @@ MOCKS_STAT_EXIT_CODE='2' \
 . $asserts/strings/eq.sh "${SCRIPT}" "$(<"${STDERR}")" ''
 . $asserts/strings/eq.sh "${SCRIPT}" "$(<"${STDOUT}")" ''
 
-:> "${STDERR}"
-:> "${STDOUT}"
-
-PATH="src/main/bash/stat/bin:${PATH}" \
-MOCKS_STAT_SIZE='3' \
- stat >"${STDOUT}" 2>"${STDERR}"
-. $asserts/strings/eq.sh "${SCRIPT}" "$?" '0'
-. $asserts/strings/eq.sh "${SCRIPT}" "$(<"${STDERR}")" ''
-. $asserts/strings/eq.sh "${SCRIPT}" "$(<"${STDOUT}")" '3'
+MOCKS_STAT_SIZES=(0 1 42 1024 32000000 'foo' '' ' ' $'\t')
+for MOCKS_STAT_SIZE in "${MOCKS_STAT_SIZES[@]}"; do
+ :> "${STDERR}"
+ :> "${STDOUT}"
+ PATH="src/main/bash/stat/bin:${PATH}" \
+ MOCKS_STAT_SIZE="${MOCKS_STAT_SIZE}" \
+  stat >"${STDOUT}" 2>"${STDERR}"
+ . $asserts/strings/eq.sh "${SCRIPT}" "$?" '0'
+ . $asserts/strings/eq.sh "${SCRIPT}:STDERR" "$(<"${STDERR}")" ''
+ . $asserts/strings/eq.sh "${SCRIPT}:STDOUT" "$(<"${STDOUT}")" "${MOCKS_STAT_SIZE}"
+done
 
 PATH="src/main/bash/stat/bin:${PATH}" \
 MOCKS_STAT_EXIT_CODE='2' \
