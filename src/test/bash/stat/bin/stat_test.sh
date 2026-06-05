@@ -1,0 +1,66 @@
+#!/usr/local/bin/bash
+
+SCRIPT='src/main/bash/stat/bin/stat'
+
+echo "Running test of \"${SCRIPT}\"..."
+
+. $asserts/files/execs.sh "${SCRIPT}"
+
+if ! /usr/local/bin/bash -n "${SCRIPT}"; then
+ echo "\"${SCRIPT}\" has wrong syntax!" >&2; exit 1; fi
+
+STDERR="$(mktemp)"
+STDOUT="$(mktemp)"
+
+PATH="src/main/bash/stat/bin:${PATH}" \
+ stat >"${STDOUT}" 2>"${STDERR}"
+. $asserts/strings/eq.sh "${SCRIPT}" "$?" '0'
+. $asserts/strings/eq.sh "${SCRIPT}" "$(<"${STDERR}")" ''
+. $asserts/strings/eq.sh "${SCRIPT}" "$(<"${STDOUT}")" ''
+
+EXIT_CODES=(0 256 'x' '01' $'0\n')
+for MOCKS_STAT_EXIT_CODE in "${EXIT_CODES[@]}"; do
+ :> "${STDERR}"
+ :> "${STDOUT}"
+ PATH="src/main/bash/stat/bin:${PATH}" \
+ MOCKS_STAT_EXIT_CODE="${MOCKS_STAT_EXIT_CODE}" \
+  stat >"${STDOUT}" 2>"${STDERR}"
+ . $asserts/strings/eq.sh "${SCRIPT}" "$?" '1'
+ . $asserts/strings/eq.sh "${SCRIPT}" "$(<"${STDERR}")" 'Wrong exit code!'
+ . $asserts/strings/eq.sh "${SCRIPT}" "$(<"${STDOUT}")" ''
+done
+
+EXIT_CODES=(1 42 255)
+for MOCKS_STAT_EXIT_CODE in "${EXIT_CODES[@]}"; do
+ :> "${STDERR}"
+ :> "${STDOUT}"
+ PATH="src/main/bash/stat/bin:${PATH}" \
+ MOCKS_STAT_EXIT_CODE="${MOCKS_STAT_EXIT_CODE}" \
+  stat >"${STDOUT}" 2>"${STDERR}"
+ . $asserts/strings/eq.sh "${SCRIPT}" "$?" "${MOCKS_STAT_EXIT_CODE}"
+ . $asserts/strings/eq.sh "${SCRIPT}" "$(<"${STDERR}")" ''
+ . $asserts/strings/eq.sh "${SCRIPT}" "$(<"${STDOUT}")" ''
+done
+
+MOCKS_STAT_SIZES=(0 1 42 1024 32000000 'foo' '' ' ' $'\t')
+for MOCKS_STAT_SIZE in "${MOCKS_STAT_SIZES[@]}"; do
+ :> "${STDERR}"
+ :> "${STDOUT}"
+ PATH="src/main/bash/stat/bin:${PATH}" \
+ MOCKS_STAT_SIZE="${MOCKS_STAT_SIZE}" \
+  stat >"${STDOUT}" 2>"${STDERR}"
+ . $asserts/strings/eq.sh "${SCRIPT}" "$?" '0'
+ . $asserts/strings/eq.sh "${SCRIPT}" "$(<"${STDERR}")" ''
+ . $asserts/strings/eq.sh "${SCRIPT}" "$(<"${STDOUT}")" "${MOCKS_STAT_SIZE}"
+done
+
+PATH="src/main/bash/stat/bin:${PATH}" \
+MOCKS_STAT_EXIT_CODE='2' \
+MOCKS_STAT_SIZE='3' \
+ stat >"${STDOUT}" 2>"${STDERR}"
+. $asserts/strings/eq.sh "${SCRIPT}" "$?" '2'
+. $asserts/strings/eq.sh "${SCRIPT}" "$(<"${STDERR}")" ''
+. $asserts/strings/eq.sh "${SCRIPT}" "$(<"${STDOUT}")" ''
+
+rm "${STDERR}"
+rm "${STDOUT}"
