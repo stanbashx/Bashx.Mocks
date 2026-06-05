@@ -11,13 +11,13 @@ COVERED_COUNT=0
 while IFS= read -r -d '' SCRIPT; do
  if [[ -L "${SCRIPT}" || ! -f "${SCRIPT}" \
   || ! -s "${SCRIPT}" || ! -x "${SCRIPT}" \
-  || ! "${SCRIPT}" =~ ^${SCRIPTS}/.+\.sh$ \
+  || ! "${SCRIPT}" =~ ^${SCRIPTS}/.+$ \
   ]] || ! /usr/local/bin/bash -n "${SCRIPT}"; then
   echo "\"${SCRIPT}\" is not supported!" >&2; exit 1
  fi
  SCRIPTS_COUNT=$((SCRIPTS_COUNT + 1))
  FILE_PATH="${SCRIPT#"${SCRIPTS}"/}"
- TEST_PATH="src/test/bash/${FILE_PATH/%.sh/_test.sh}"
+ TEST_PATH="src/test/bash/${FILE_PATH}_test.sh"
  if [[ -L "${TEST_PATH}" || ! -f "${TEST_PATH}" \
   || ! -s "${TEST_PATH}" || ! -x "${TEST_PATH}" \
   ]] || ! /usr/local/bin/bash -n "${TEST_PATH}"; then
