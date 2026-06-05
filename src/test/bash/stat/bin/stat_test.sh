@@ -17,4 +17,32 @@ STDOUT="$(mktemp)"
 . $asserts/strings/eq.sh "${SCRIPT}" "$(<"${STDERR}")" ''
 . $asserts/strings/eq.sh "${SCRIPT}" "$(<"${STDOUT}")" ''
 
-echo 'Not implemented!'; exit 1 # todo
+:> "${STDERR}"
+:> "${STDOUT}"
+
+MOCKS_STAT_EXIT_CODE='x' \
+ "${SCRIPT}" >"${STDOUT}" 2>"${STDERR}"
+. $asserts/strings/eq.sh "${SCRIPT}" "$?" '1'
+. $asserts/strings/eq.sh "${SCRIPT}" "$(<"${STDERR}")" 'Wrong exit code!'
+. $asserts/strings/eq.sh "${SCRIPT}" "$(<"${STDOUT}")" ''
+
+:> "${STDERR}"
+:> "${STDOUT}"
+
+MOCKS_STAT_EXIT_CODE='2' \
+ "${SCRIPT}" >"${STDOUT}" 2>"${STDERR}"
+. $asserts/strings/eq.sh "${SCRIPT}" "$?" '2'
+. $asserts/strings/eq.sh "${SCRIPT}" "$(<"${STDERR}")" ''
+. $asserts/strings/eq.sh "${SCRIPT}" "$(<"${STDOUT}")" ''
+
+:> "${STDERR}"
+:> "${STDOUT}"
+
+MOCKS_STAT_SIZE='3' \
+ "${SCRIPT}" >"${STDOUT}" 2>"${STDERR}"
+. $asserts/strings/eq.sh "${SCRIPT}" "$?" '0'
+. $asserts/strings/eq.sh "${SCRIPT}" "$(<"${STDERR}")" ''
+. $asserts/strings/eq.sh "${SCRIPT}" "$(<"${STDOUT}")" '3'
+
+rm "${STDERR}"
+rm "${STDOUT}"
