@@ -18,15 +18,17 @@ PATH="src/main/bash/stat/bin:${PATH}" \
 . $asserts/strings/eq.sh "${SCRIPT}" "$(<"${STDERR}")" ''
 . $asserts/strings/eq.sh "${SCRIPT}" "$(<"${STDOUT}")" ''
 
-:> "${STDERR}"
-:> "${STDOUT}"
-
-PATH="src/main/bash/stat/bin:${PATH}" \
-MOCKS_STAT_EXIT_CODE='x' \
- stat >"${STDOUT}" 2>"${STDERR}"
-. $asserts/strings/eq.sh "${SCRIPT}" "$?" '1'
-. $asserts/strings/eq.sh "${SCRIPT}" "$(<"${STDERR}")" 'Wrong exit code!'
-. $asserts/strings/eq.sh "${SCRIPT}" "$(<"${STDOUT}")" ''
+EXIT_CODES=('x' '01' $'0\n')
+for MOCKS_STAT_EXIT_CODE in "${EXIT_CODES[@]}"; do
+ :> "${STDERR}"
+ :> "${STDOUT}"
+ PATH="src/main/bash/stat/bin:${PATH}" \
+ MOCKS_STAT_EXIT_CODE="${MOCKS_STAT_EXIT_CODE}" \
+  stat >"${STDOUT}" 2>"${STDERR}"
+ . $asserts/strings/eq.sh "${SCRIPT}" "$?" '1'
+ . $asserts/strings/eq.sh "${SCRIPT}" "$(<"${STDERR}")" 'Wrong exit code!'
+ . $asserts/strings/eq.sh "${SCRIPT}" "$(<"${STDOUT}")" ''
+done
 
 :> "${STDERR}"
 :> "${STDOUT}"
