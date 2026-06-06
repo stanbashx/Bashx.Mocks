@@ -1,0 +1,56 @@
+#!/usr/local/bin/bash
+
+MOCKS_CURL_FORM_STRINGS=()
+MOCKS_CURL_FORMS=()
+
+if [[ $# -gt 1 ]]; then
+ while [[ $# -gt 0 ]]; do
+  case "$1" in
+   -o) MOCKS_CURL_DST_PATH="$2"; shift 2;;
+   -w) MOCKS_CURL_DST_FORMAT="$2"; shift 2;;
+   --data) MOCKS_CURL_DATA="$2"; shift 2;;
+   --form-string) MOCKS_CURL_FORM_STRINGS+=("$2"); shift 2;;
+   --form) MOCKS_CURL_FORMS+=("$2"); shift 2;;
+   *) shift;;
+  esac
+ done
+fi
+
+if [[ -n "${MOCKS_CURL_EXIT_CODE}" ]]; then
+ if [[ "${MOCKS_CURL_EXIT_CODE}" =~ ^[1-9][0-9]*$ && ${MOCKS_CURL_EXIT_CODE} -lt 256 ]]; then
+  exit ${MOCKS_CURL_EXIT_CODE}
+ else
+  echo 'Wrong exit code!' >&2; exit 1
+ fi
+fi
+
+if [[ -n "${MOCKS_CURL_DST_PATH}" ]]; then
+ case "${MOCKS_CURL_DST_TYPE}" in
+  'file') touch "${MOCKS_CURL_DST_PATH}" || exit 1;;
+  'symlink') ln -s "${MOCKS_CURL_DST_PATH}" "${MOCKS_CURL_DST_PATH}" || exit 1;;
+  'dir') mkdir -p "${MOCKS_CURL_DST_PATH}" || exit 1;;
+  *) if [[ -n "${MOCKS_CURL_DST}" ]]; then
+   printf '%s' "${MOCKS_CURL_DST}" > "${MOCKS_CURL_DST_PATH}" || exit 1; fi;;
+ esac
+fi
+
+if [[ -n "${MOCKS_CURL_DATA}" && -n "${MOCKS_CURL_DATA_PATH}" ]]; then
+ printf '%s' "${MOCKS_CURL_DATA}" > "${MOCKS_CURL_DATA_PATH}" || exit 1; fi
+
+if [[ -n "${MOCKS_CURL_FORM_STRINGS_PATH}" ]]; then
+ for MOCKS_CURL_FORM_STRING in "${MOCKS_CURL_FORM_STRINGS[@]}"; do
+  echo "${MOCKS_CURL_FORM_STRING}" >> "${MOCKS_CURL_FORM_STRINGS_PATH}" || exit 1
+ done
+fi
+
+if [[ -n "${MOCKS_CURL_FORMS_PATH}" ]]; then
+ for MOCKS_CURL_FORM in "${MOCKS_CURL_FORMS[@]}"; do
+  echo "${MOCKS_CURL_FORM}" >> "${MOCKS_CURL_FORMS_PATH}" || exit 1
+ done
+fi
+
+if [[ "${MOCKS_CURL_DST_FORMAT}" == '%{http_code}' ]]; then
+ printf '%s' "${MOCKS_CURL_HTTP_CODE}"
+elif [[ -z "${MOCKS_CURL_DST_FORMAT}" ]]; then
+ printf '%s' "${MOCKS_CURL_DST}"
+fi
