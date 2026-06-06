@@ -1,10 +1,13 @@
 #!/usr/local/bin/bash
 
+MOCKS_CURL_FORM_STRINGS=()
+
 while [[ $# -gt 0 ]]; do
  case "$1" in
   -o) MOCKS_CURL_DST_PATH="$2"; shift 2;;
   -w) MOCKS_CURL_DST_FORMAT="$2"; shift 2;;
   --data) MOCKS_CURL_DATA="$2"; shift 2;;
+  --form-string) MOCKS_CURL_FORM_STRINGS+=("$2"); shift 2;;
   *) shift;;
  esac
 done
@@ -29,6 +32,12 @@ fi
 
 if [[ -n "${MOCKS_CURL_DATA}" && -n "${MOCKS_CURL_DATA_PATH}" ]]; then
  printf '%s' "${MOCKS_CURL_DATA}" > "${MOCKS_CURL_DATA_PATH}" || exit 1; fi
+
+if [[ -n "${MOCKS_CURL_FORM_STRINGS_PATH}" ]]; then
+ for MOCKS_CURL_FORM_STRING in "${MOCKS_CURL_FORM_STRINGS[@]}"; do
+  echo "${MOCKS_CURL_FORM_STRING}" >> "${MOCKS_CURL_FORM_STRINGS_PATH}" || exit 1
+ done
+fi
 
 if [[ "${MOCKS_CURL_DST_FORMAT}" == '%{http_code}' ]]; then
  printf '%s' "${MOCKS_CURL_HTTP_CODE}"
