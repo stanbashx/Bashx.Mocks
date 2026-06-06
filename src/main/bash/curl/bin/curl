@@ -8,4 +8,10 @@ if [[ -n "${MOCKS_CURL_EXIT_CODE}" ]]; then
  fi
 fi
 
+if [[ "${MOCKS_CURL_DST_FORMAT}" == '%{http_code}' ]]; then
+ printf '%s' "${MOCKS_CURL_HTTP_CODE}"
+elif [[ -z "${MOCKS_CURL_DST_FORMAT}" ]]; then
+ printf '%s' "${MOCKS_CURL_DST}"
+fi
+
 echo 'Not implemented!'; exit 1 # todo
