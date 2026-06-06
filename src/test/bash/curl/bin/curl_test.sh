@@ -108,6 +108,17 @@ MOCKS_CURL_DST_PATH="${MOCKS_CURL_DST_PATH}" \
 . $asserts/files/empty.sh "${MOCKS_CURL_DST_PATH}"
 rm "${MOCKS_CURL_DST_PATH}"
 
+PATH="src/main/bash/curl/bin:${PATH}" \
+MOCKS_CURL_DST_TYPE='symlink' \
+MOCKS_CURL_DST_PATH="${MOCKS_CURL_DST_PATH}" \
+ curl >"${STDOUT}" 2>"${STDERR}"
+. $asserts/strings/eq.sh "${SCRIPT}" "$?" '0'
+. $asserts/files/empty.sh "${STDERR}"
+. $asserts/files/empty.sh "${STDOUT}"
+if [[ ! -L "${MOCKS_CURL_DST_PATH}" ]]; then
+ echo "\"${MOCKS_CURL_DST_PATH}\" is not a symlink!" >&2; exit 1; fi
+rm "${MOCKS_CURL_DST_PATH}"
+
 echo 'Not implemented!'; exit 1 # todo
 
 rm "${STDERR}"
