@@ -126,12 +126,12 @@ MOCKS_CURL_DST_PATH="${MOCKS_CURL_DST_PATH}" \
 . $asserts/strings/eq.sh "${SCRIPT}" "$?" '0'
 . $asserts/files/empty.sh "${STDERR}"
 . $asserts/files/empty.sh "${STDOUT}"
-if [[ -L "${ASSERTS_PATH}" ]]; then
+if [[ -L "${MOCKS_CURL_DST_PATH}" ]]; then
  echo "\"${MOCKS_CURL_DST_PATH}\" is a symlink!" >&2; exit 1
 elif [[ ! -e "${MOCKS_CURL_DST_PATH}" ]]; then
  echo "\"${MOCKS_CURL_DST_PATH}\" does not exist!" >&2; exit 1
 elif [[ ! -d "${MOCKS_CURL_DST_PATH}" ]]; then
- echo "\"${ASSERTS_PATH}\" is not a dir!" >&2; exit 1
+ echo "\"${MOCKS_CURL_DST_PATH}\" is not a dir!" >&2; exit 1
 fi
 rm -rf "${MOCKS_CURL_DST_PATH}"
 
