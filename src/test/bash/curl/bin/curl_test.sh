@@ -135,6 +135,27 @@ elif [[ ! -d "${MOCKS_CURL_DST_PATH}" ]]; then
 fi
 rm -rf "${MOCKS_CURL_DST_PATH}"
 
+DATAS=('' ' ' 'x' 42 '{"foo":"bar"}' $'\t' $'\n200' 'foo=bar' 'foo: bar')
+FORM_STRINGS=()
+EXPECTED_TEXT=''
+FORM_STRINGS+=(--form-string "${DATAS[0]}")
+EXPECTED_TEXT="${EXPECTED_TEXT}${DATAS[0]}"
+for (( i=1; i<${#DATAS[@]}; i++ )); do
+ FORM_STRINGS+=(--form-string "${DATAS[i]}")
+ EXPECTED_TEXT="${EXPECTED_TEXT}"$'\n'"${DATAS[i]}"
+done
+MOCKS_CURL_FORM_STRINGS_PATH="$(mktemp)"
+:> "${STDERR}"
+:> "${STDOUT}"
+PATH="src/main/bash/curl/bin:${PATH}" \
+MOCKS_CURL_FORM_STRINGS_PATH="${MOCKS_CURL_FORM_STRINGS_PATH}" \
+ curl "${FORM_STRINGS[@]}" >"${STDOUT}" 2>"${STDERR}"
+. $asserts/strings/eq.sh "${SCRIPT}" "$?" '0'
+. $asserts/files/empty.sh "${STDERR}"
+. $asserts/files/empty.sh "${STDOUT}"
+. $asserts/strings/eq.sh "${SCRIPT}" "$(<"${MOCKS_CURL_FORM_STRINGS_PATH}")" "${EXPECTED_TEXT}"
+rm "${MOCKS_CURL_FORM_STRINGS_PATH}"
+
 echo 'Not implemented!'; exit 1 # todo
 
 rm "${STDERR}"
