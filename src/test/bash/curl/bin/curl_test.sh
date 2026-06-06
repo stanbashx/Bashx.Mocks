@@ -66,6 +66,16 @@ for MOCKS_CURL_DST in "${DATAS[@]}"; do
  . $asserts/strings/eq.sh "${SCRIPT}" "$(<"${STDOUT}")" "${MOCKS_CURL_DST}"
 done
 
+:> "${STDERR}"
+:> "${STDOUT}"
+PATH="src/main/bash/curl/bin:${PATH}" \
+MOCKS_CURL_HTTP_CODE=200 \
+MOCKS_CURL_DST='foo' \
+ curl -w 'bar' >"${STDOUT}" 2>"${STDERR}"
+. $asserts/strings/eq.sh "${SCRIPT}" "$?" '0'
+. $asserts/files/empty.sh "${STDERR}"
+. $asserts/files/empty.sh "${STDOUT}"
+
 MOCKS_CURL_DATA_PATH="$(mktemp)"
 DATAS=('' ' ' 'x' 42 '{"foo":"bar"}' $'\t' $'\n200')
 for MOCKS_CURL_DATA in "${DATAS[@]}"; do
