@@ -54,6 +54,17 @@ for MOCKS_CURL_HTTP_CODE in "${HTTP_CODES[@]}"; do
  . $asserts/strings/eq.sh "${SCRIPT}" "$(<"${STDOUT}")" "${MOCKS_CURL_HTTP_CODE}"
 done
 
+MOCKS_CURL_DATA_PATH="$(mktemp)"
+PATH="src/main/bash/curl/bin:${PATH}" \
+ MOCKS_CURL_DATA='foo' \
+ MOCKS_CURL_DATA_PATH="${MOCKS_CURL_DATA_PATH}" \
+ curl --data "${MOCKS_CURL_DATA}" >"${STDOUT}" 2>"${STDERR}"
+. $asserts/strings/eq.sh "${SCRIPT}" "$?" '0'
+. $asserts/files/empty.sh "${STDERR}"
+. $asserts/files/empty.sh "${STDOUT}"
+. $asserts/strings/eq.sh "${SCRIPT}" "$(<"${MOCKS_CURL_DATA_PATH}")" "${MOCKS_CURL_DATA}"
+rm "${MOCKS_CURL_DATA_PATH}"
+
 echo 'Not implemented!'; exit 1 # todo
 
 rm "${STDERR}"
