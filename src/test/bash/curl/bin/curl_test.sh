@@ -18,7 +18,7 @@ PATH="src/main/bash/curl/bin:${PATH}" \
 . $asserts/files/empty.sh "${STDERR}"
 . $asserts/files/empty.sh "${STDOUT}"
 
-EXIT_CODES=(0 256 'x' '01' $'0\n')
+EXIT_CODES=(0 256 'x' '01' $'0\n' '-1' '+1' ' 1' 2147483647)
 for MOCKS_CURL_EXIT_CODE in "${EXIT_CODES[@]}"; do
  :> "${STDERR}"
  :> "${STDOUT}"
