@@ -3,6 +3,7 @@
 while [[ $# -gt 0 ]]; do
  case "$1" in
   -o) MOCKS_CURL_DST_PATH="$2"; shift 2;;
+  -w) MOCKS_CURL_DST_FORMAT="$2"; shift 2;;
   *) shift;;
  esac
 done
@@ -30,5 +31,3 @@ if [[ "${MOCKS_CURL_DST_FORMAT}" == '%{http_code}' ]]; then
 elif [[ -z "${MOCKS_CURL_DST_FORMAT}" ]]; then
  printf '%s' "${MOCKS_CURL_DST}"
 fi
-
-echo 'Not implemented!'; exit 1 # todo
