@@ -82,7 +82,6 @@ for MOCKS_CURL_DATA in "${DATAS[@]}"; do
  :> "${STDERR}"
  :> "${STDOUT}"
  PATH="src/main/bash/curl/bin:${PATH}" \
- MOCKS_CURL_DATA="${MOCKS_CURL_DATA}" \
  MOCKS_CURL_DATA_PATH="${MOCKS_CURL_DATA_PATH}" \
   curl --data "${MOCKS_CURL_DATA}" >"${STDOUT}" 2>"${STDERR}"
  . $asserts/strings/eq.sh "${SCRIPT}" "$?" '0'
@@ -90,6 +89,18 @@ for MOCKS_CURL_DATA in "${DATAS[@]}"; do
  . $asserts/files/empty.sh "${STDOUT}"
  . $asserts/strings/eq.sh "${SCRIPT}" "$(<"${MOCKS_CURL_DATA_PATH}")" "${MOCKS_CURL_DATA}"
 done
+rm "${MOCKS_CURL_DATA_PATH}"
+
+MOCKS_CURL_DATA_PATH="$(mktemp)"
+DATAS=('' ' ' 'x' 42 '{"foo":"bar"}' $'\t' $'\n200')
+:> "${STDERR}"
+:> "${STDOUT}"
+PATH="src/main/bash/curl/bin:${PATH}" \
+ curl --data 'foo' >"${STDOUT}" 2>"${STDERR}"
+. $asserts/strings/eq.sh "${SCRIPT}" "$?" '0'
+. $asserts/files/empty.sh "${STDERR}"
+. $asserts/files/empty.sh "${STDOUT}"
+. $asserts/files/empty.sh "${MOCKS_CURL_DATA_PATH}"
 rm "${MOCKS_CURL_DATA_PATH}"
 
 MOCKS_CURL_DST_PATH="$(mktemp)"
