@@ -1,6 +1,7 @@
 #!/usr/local/bin/bash
 
 MOCKS_CURL_FORM_STRINGS=()
+MOCKS_CURL_FORMS=()
 
 if [[ $# -gt 1 ]]; then
  while [[ $# -gt 0 ]]; do
