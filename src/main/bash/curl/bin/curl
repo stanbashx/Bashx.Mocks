@@ -1,11 +1,28 @@
 #!/usr/local/bin/bash
 
+while [[ $# -gt 0 ]]; do
+ case "$1" in
+  -o) MOCKS_CURL_DST_PATH="$2"; shift 2;;
+  *) shift;;
+ esac
+done
+
 if [[ -n "${MOCKS_CURL_EXIT_CODE}" ]]; then
  if [[ "${MOCKS_CURL_EXIT_CODE}" =~ ^[1-9][0-9]*$ && ${MOCKS_CURL_EXIT_CODE} -lt 256 ]]; then
   exit ${MOCKS_CURL_EXIT_CODE}
  else
   echo 'Wrong exit code!' >&2; exit 1
  fi
+fi
+
+if [[ -n "${MOCKS_CURL_DST_PATH}" ]]; then
+ case "${MOCKS_CURL_DST_TYPE}" in
+  'file') touch "${MOCKS_CURL_DST_PATH}" || exit 1;;
+  'symlink') ln -s "${MOCKS_CURL_DST_PATH}" "${MOCKS_CURL_DST_PATH}" || exit 1;;
+  'dir') mkdir -p "${MOCKS_CURL_DST_PATH}" || exit 1;;
+  *) if [[ -n "${MOCKS_CURL_DST}" ]]; then
+   printf '%s' "${MOCKS_CURL_DST}" > "${MOCKS_CURL_DST_PATH}" || exit 1; fi;;
+ esac
 fi
 
 if [[ "${MOCKS_CURL_DST_FORMAT}" == '%{http_code}' ]]; then
