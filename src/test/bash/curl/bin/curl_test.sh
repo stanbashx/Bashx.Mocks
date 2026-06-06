@@ -55,14 +55,19 @@ for MOCKS_CURL_HTTP_CODE in "${HTTP_CODES[@]}"; do
 done
 
 MOCKS_CURL_DATA_PATH="$(mktemp)"
-PATH="src/main/bash/curl/bin:${PATH}" \
- MOCKS_CURL_DATA='foo' \
+DATAS=('' ' ' 'x' 42 '{"foo":"bar"}' $'\t' $'\n200')
+for MOCKS_CURL_DATA in "${DATAS[@]}"; do
+ :> "${STDERR}"
+ :> "${STDOUT}"
+ PATH="src/main/bash/curl/bin:${PATH}" \
+ MOCKS_CURL_DATA="${MOCKS_CURL_DATA}" \
  MOCKS_CURL_DATA_PATH="${MOCKS_CURL_DATA_PATH}" \
- curl --data "${MOCKS_CURL_DATA}" >"${STDOUT}" 2>"${STDERR}"
-. $asserts/strings/eq.sh "${SCRIPT}" "$?" '0'
-. $asserts/files/empty.sh "${STDERR}"
-. $asserts/files/empty.sh "${STDOUT}"
-. $asserts/strings/eq.sh "${SCRIPT}" "$(<"${MOCKS_CURL_DATA_PATH}")" "${MOCKS_CURL_DATA}"
+  curl --data "${MOCKS_CURL_DATA}" >"${STDOUT}" 2>"${STDERR}"
+ . $asserts/strings/eq.sh "${SCRIPT}" "$?" '0'
+ . $asserts/files/empty.sh "${STDERR}"
+ . $asserts/files/empty.sh "${STDOUT}"
+ . $asserts/strings/eq.sh "${SCRIPT}" "$(<"${MOCKS_CURL_DATA_PATH}")" "${MOCKS_CURL_DATA}"
+done
 rm "${MOCKS_CURL_DATA_PATH}"
 
 echo 'Not implemented!'; exit 1 # todo
