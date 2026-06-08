@@ -64,9 +64,9 @@ if [[ -n "${MOCKS_CURL_HEADERS_PATH}" ]]; then
 fi
 
 if [[ "${MOCKS_CURL_DST_FORMAT_EXISTS}" == 'true' ]]; then
- if [[ "${MOCKS_CURL_DST_FORMAT}" == '%{http_code}' ]]; then
-  printf '%s' "${MOCKS_CURL_HTTP_CODE}"
- fi
+ case "${MOCKS_CURL_DST_FORMAT}" in
+  '%{http_code}') printf '%s' "${MOCKS_CURL_HTTP_CODE}";;
+ esac
 else
  printf '%s' "${MOCKS_CURL_DST}"
 fi
