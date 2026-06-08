@@ -8,6 +8,8 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - env:
+          DOCKER_IMAGE: 'docker.io/kepocnhh/multitool-bash-amd64'
+          DOCKER_IMAGE_DIGEST: '4feb57c1cbf7d1a4b88aed6c354e1090959285c7928a44f242bd23861d43c407'
           KEYSTORE_PASSWORD: "${{secrets.KEYSTORE_RELEASE_PASSWORD}}"
           GPG_PASSWORD: "${{secrets.GPG_PASSWORD}}"
         run: |
@@ -26,7 +28,7 @@ jobs:
            -e TG_CHAT_ID='${{secrets.TG_CHAT_ID}}' \
            -e GPG_KEY='.mt/key.gpg' \
            -e GPG_PASSWORD="${GPG_PASSWORD}" \
-           -id --name container 'docker.io/kepocnhh/multitool-bash-amd64:bash-5-a'
+           -id --name container "${DOCKER_IMAGE}@sha256:${DOCKER_IMAGE_DIGEST}"
           docker exec container /usr/local/bin/bash -c 'echo "${{secrets.KEYSTORE_RELEASE}}" | base64 -d > ${KEYSTORE}'
           docker exec container /usr/local/bin/bash -c 'echo "${{secrets.GPG_KEY}}" > "${GPG_KEY}"'
           docker exec container /usr/local/bin/bash -c '$mt/bash/pr.sh'
