@@ -20,6 +20,8 @@ PATH="src/main/bash/curl/bin:${PATH}" \
 . $asserts/files/empty.sh "${STDERR}"
 . $asserts/files/empty.sh "${STDOUT}"
 
+:> "${STDERR}"
+:> "${STDOUT}"
 EXIT_CODES=(0 256 'x' '01' $'0\n' '-1' '+1' ' 1' 2147483647)
 for MOCKS_CURL_EXIT_CODE in "${EXIT_CODES[@]}"; do
  :> "${STDERR}"
@@ -44,6 +46,8 @@ for MOCKS_CURL_EXIT_CODE in "${EXIT_CODES[@]}"; do
  . $asserts/files/empty.sh "${STDOUT}"
 done
 
+:> "${STDERR}"
+:> "${STDOUT}"
 HTTP_CODES=(0 200 500 'x' '01' '' ' ' $'\t' $'\n200')
 for MOCKS_CURL_HTTP_CODE in "${HTTP_CODES[@]}"; do
  :> "${STDERR}"
@@ -56,6 +60,8 @@ for MOCKS_CURL_HTTP_CODE in "${HTTP_CODES[@]}"; do
  . $asserts/strings/eq.sh "${SCRIPT}" "$(<"${STDOUT}")" "${MOCKS_CURL_HTTP_CODE}"
 done
 
+:> "${STDERR}"
+:> "${STDOUT}"
 for MOCKS_CURL_DST in "${MOCKS_DATAS[@]}"; do
  :> "${STDERR}"
  :> "${STDOUT}"
@@ -79,10 +85,12 @@ MOCKS_CURL_DST='foo' \
 
 # MOCKS_CURL_DATA + MOCKS_CURL_DATA_PATH
 
-MOCKS_CURL_DATA_PATH="$(mktemp)"
+:> "${STDERR}"
+:> "${STDOUT}"
 MOCKS_FLAGS=('--data' '-d')
 for MOCKS_FLAG in "${MOCKS_FLAGS[@]}"; do
  for MOCKS_CURL_DATA in "${MOCKS_DATAS[@]}"; do
+  MOCKS_CURL_DATA_PATH="$(mktemp)"
   PATH="src/main/bash/curl/bin:${PATH}" \
   MOCKS_CURL_DATA_PATH="${MOCKS_CURL_DATA_PATH}" \
    curl "${MOCKS_FLAG}" "${MOCKS_CURL_DATA}" >"${STDOUT}" 2>"${STDERR}"
@@ -90,12 +98,14 @@ for MOCKS_FLAG in "${MOCKS_FLAGS[@]}"; do
   . $asserts/files/empty.sh "${STDERR}"
   . $asserts/files/empty.sh "${STDOUT}"
   . $asserts/strings/eq.sh "${SCRIPT}" "$(<"${MOCKS_CURL_DATA_PATH}")" "${MOCKS_CURL_DATA}"
+  rm "${MOCKS_CURL_DATA_PATH}"
  done
 done
-rm "${MOCKS_CURL_DATA_PATH}"
 
 # MOCKS_CURL_DATA
 
+:> "${STDERR}"
+:> "${STDOUT}"
 MOCKS_CURL_DATA_PATH="$(mktemp)"
 MOCKS_FLAGS=('--data' '-d')
 for MOCKS_FLAG in "${MOCKS_FLAGS[@]}"; do
@@ -110,6 +120,8 @@ rm "${MOCKS_CURL_DATA_PATH}"
 
 # MOCKS_CURL_DATA_PATH
 
+:> "${STDERR}"
+:> "${STDOUT}"
 MOCKS_CURL_DATA_PATH="$(mktemp)"
 PATH="src/main/bash/curl/bin:${PATH}" \
 MOCKS_CURL_DATA_PATH="${MOCKS_CURL_DATA_PATH}" \
@@ -122,10 +134,10 @@ rm "${MOCKS_CURL_DATA_PATH}"
 
 # MOCKS_CURL_DST + MOCKS_CURL_DST_PATH
 
-MOCKS_CURL_DST_PATH="$(mktemp)"
 for MOCKS_CURL_DST in "${MOCKS_DATAS[@]}"; do
  :> "${STDERR}"
  :> "${STDOUT}"
+ MOCKS_CURL_DST_PATH="$(mktemp)"
  PATH="src/main/bash/curl/bin:${PATH}" \
  MOCKS_CURL_DST="${MOCKS_CURL_DST}" \
   curl -o "${MOCKS_CURL_DST_PATH}" >"${STDOUT}" 2>"${STDERR}"
@@ -133,14 +145,14 @@ for MOCKS_CURL_DST in "${MOCKS_DATAS[@]}"; do
  . $asserts/files/empty.sh "${STDERR}"
  . $asserts/strings/eq.sh "${SCRIPT}" "$(<"${STDOUT}")" "${MOCKS_CURL_DST}"
  . $asserts/strings/eq.sh "${SCRIPT}" "$(<"${MOCKS_CURL_DST_PATH}")" "${MOCKS_CURL_DST}"
+ rm "${MOCKS_CURL_DST_PATH}"
 done
-rm "${MOCKS_CURL_DST_PATH}"
 
 # MOCKS_CURL_DST
 
-MOCKS_CURL_DST_PATH="$(mktemp)"
 :> "${STDERR}"
 :> "${STDOUT}"
+MOCKS_CURL_DST_PATH="$(mktemp)"
 PATH="src/main/bash/curl/bin:${PATH}" \
 MOCKS_CURL_DST='foo' \
  curl >"${STDOUT}" 2>"${STDERR}"
@@ -152,9 +164,9 @@ rm "${MOCKS_CURL_DST_PATH}"
 
 # MOCKS_CURL_DST_PATH
 
-MOCKS_CURL_DST_PATH="$(mktemp)"
 :> "${STDERR}"
 :> "${STDOUT}"
+MOCKS_CURL_DST_PATH="$(mktemp)"
 PATH="src/main/bash/curl/bin:${PATH}" \
  curl -o "${MOCKS_CURL_DST_PATH}" >"${STDOUT}" 2>"${STDERR}"
 . $asserts/strings/eq.sh "${SCRIPT}" "$?" '0'
@@ -163,6 +175,9 @@ PATH="src/main/bash/curl/bin:${PATH}" \
 . $asserts/files/empty.sh "${MOCKS_CURL_DST_PATH}"
 rm "${MOCKS_CURL_DST_PATH}"
 
+:> "${STDERR}"
+:> "${STDOUT}"
+MOCKS_CURL_DST_PATH="$(mktemp)"
 PATH="src/main/bash/curl/bin:${PATH}" \
 MOCKS_CURL_DST_TYPE='file' \
  curl -o "${MOCKS_CURL_DST_PATH}" >"${STDOUT}" 2>"${STDERR}"
@@ -172,6 +187,10 @@ MOCKS_CURL_DST_TYPE='file' \
 . $asserts/files/empty.sh "${MOCKS_CURL_DST_PATH}"
 rm "${MOCKS_CURL_DST_PATH}"
 
+:> "${STDERR}"
+:> "${STDOUT}"
+MOCKS_CURL_DST_PATH="$(mktemp)"
+rm "${MOCKS_CURL_DST_PATH}"
 PATH="src/main/bash/curl/bin:${PATH}" \
 MOCKS_CURL_DST_TYPE='symlink' \
  curl -o "${MOCKS_CURL_DST_PATH}" >"${STDOUT}" 2>"${STDERR}"
@@ -182,6 +201,10 @@ if [[ ! -L "${MOCKS_CURL_DST_PATH}" ]]; then
  echo "\"${MOCKS_CURL_DST_PATH}\" is not a symlink!" >&2; exit 1; fi
 rm "${MOCKS_CURL_DST_PATH}"
 
+:> "${STDERR}"
+:> "${STDOUT}"
+MOCKS_CURL_DST_PATH="$(mktemp)"
+rm "${MOCKS_CURL_DST_PATH}"
 PATH="src/main/bash/curl/bin:${PATH}" \
 MOCKS_CURL_DST_TYPE='dir' \
  curl -o "${MOCKS_CURL_DST_PATH}" >"${STDOUT}" 2>"${STDERR}"
@@ -197,6 +220,10 @@ elif [[ ! -d "${MOCKS_CURL_DST_PATH}" ]]; then
 fi
 rm -rf "${MOCKS_CURL_DST_PATH}"
 
+# MOCKS_CURL_FORM_STRINGS_PATH
+
+:> "${STDERR}"
+:> "${STDOUT}"
 FORM_STRINGS=()
 EXPECTED_TEXT=''
 FORM_STRINGS+=('--form-string' "${MOCKS_DATAS[0]}")
@@ -216,6 +243,10 @@ MOCKS_CURL_FORM_STRINGS_PATH="${MOCKS_CURL_FORM_STRINGS_PATH}" \
 . $asserts/strings/eq.sh "${SCRIPT}" "$(<"${MOCKS_CURL_FORM_STRINGS_PATH}")" "${EXPECTED_TEXT}"
 rm "${MOCKS_CURL_FORM_STRINGS_PATH}"
 
+# MOCKS_CURL_FORMS_PATH
+
+:> "${STDERR}"
+:> "${STDOUT}"
 MOCKS_FLAGS=('--form' '-F')
 for MOCKS_FLAG in "${MOCKS_FLAGS[@]}"; do
  MOCKS_CURL_FORMS_PATH="$(mktemp)"
@@ -238,6 +269,10 @@ for MOCKS_FLAG in "${MOCKS_FLAGS[@]}"; do
  rm "${MOCKS_CURL_FORMS_PATH}"
 done
 
+# MOCKS_CURL_HEADERS_PATH
+
+:> "${STDERR}"
+:> "${STDOUT}"
 MOCKS_FLAGS=('--header' '-H')
 for MOCKS_FLAG in "${MOCKS_FLAGS[@]}"; do
  MOCKS_CURL_HEADERS_PATH="$(mktemp)"
