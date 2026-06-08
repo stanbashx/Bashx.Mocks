@@ -9,6 +9,8 @@ echo "Running test of \"${SCRIPT}\"..."
 if ! /usr/local/bin/bash -n "${SCRIPT}"; then
  echo "\"${SCRIPT}\" has wrong syntax!" >&2; exit 1; fi
 
+MOCKS_DATAS=('' ' ' 'x' 42 '{"foo":"bar"}' $'\t' $'\n200' 'foo=bar' 'foo: bar' 'document=@"/foo/bar/baz.txt"')
+
 STDERR="$(mktemp)"
 STDOUT="$(mktemp)"
 
@@ -54,7 +56,6 @@ for MOCKS_CURL_HTTP_CODE in "${HTTP_CODES[@]}"; do
  . $asserts/strings/eq.sh "${SCRIPT}" "$(<"${STDOUT}")" "${MOCKS_CURL_HTTP_CODE}"
 done
 
-MOCKS_DATAS=('' ' ' 'x' 42 '{"foo":"bar"}' $'\t' $'\n200' 'foo=bar' 'foo: bar' 'document=@"/foo/bar/baz.txt"')
 for MOCKS_CURL_DST in "${MOCKS_DATAS[@]}"; do
  :> "${STDERR}"
  :> "${STDOUT}"
@@ -80,7 +81,6 @@ MOCKS_CURL_DST='foo' \
 
 MOCKS_CURL_DATA_PATH="$(mktemp)"
 MOCKS_FLAGS=('--data' '-d')
-MOCKS_DATAS=('' ' ' 'x' 42 '{"foo":"bar"}' $'\t' $'\n200' 'foo=bar' 'foo: bar' 'document=@"/foo/bar/baz.txt"')
 :> "${STDERR}"
 :> "${STDOUT}"
 for MOCKS_FLAG in "${MOCKS_FLAGS[@]}"; do
@@ -112,11 +112,10 @@ for MOCKS_FLAG in "${MOCKS_FLAGS[@]}"; do
 done
 rm "${MOCKS_CURL_DATA_PATH}"
 
-echo 'Not implemented!'; exit 1 # todo
+# MOCKS_CURL_DST + MOCKS_CURL_DST_PATH
 
 MOCKS_CURL_DST_PATH="$(mktemp)"
-DATAS=('' ' ' 'x' 42 '{"foo":"bar"}' $'\t' $'\n200')
-for MOCKS_CURL_DST in "${DATAS[@]}"; do
+for MOCKS_CURL_DST in "${MOCKS_DATAS[@]}"; do
  :> "${STDERR}"
  :> "${STDOUT}"
  PATH="src/main/bash/curl/bin:${PATH}" \
@@ -129,6 +128,8 @@ for MOCKS_CURL_DST in "${DATAS[@]}"; do
  . $asserts/strings/eq.sh "${SCRIPT}" "$(<"${MOCKS_CURL_DST_PATH}")" "${MOCKS_CURL_DST}"
 done
 rm "${MOCKS_CURL_DST_PATH}"
+
+echo 'Not implemented!'; exit 1 # todo
 
 MOCKS_CURL_DST_PATH="$(mktemp)"
 :> "${STDERR}"
