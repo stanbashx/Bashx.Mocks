@@ -51,6 +51,12 @@ if [[ -n "${MOCKS_CURL_FORMS_PATH}" ]]; then
  done
 fi
 
+if [[ -n "${MOCKS_CURL_HEADERS_PATH}" ]]; then
+ for MOCKS_CURL_HEADER in "${MOCKS_CURL_HEADERS[@]}"; do
+  echo "${MOCKS_CURL_HEADER}" >> "${MOCKS_CURL_HEADERS_PATH}" || exit 1
+ done
+fi
+
 if [[ "${MOCKS_CURL_DST_FORMAT}" == '%{http_code}' ]]; then
  printf '%s' "${MOCKS_CURL_HTTP_CODE}"
 elif [[ -z "${MOCKS_CURL_DST_FORMAT}" ]]; then

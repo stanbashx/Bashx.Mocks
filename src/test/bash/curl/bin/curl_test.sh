@@ -251,5 +251,28 @@ for MOCKS_FLAG in "${MOCKS_FLAGS[@]}"; do
  rm "${MOCKS_CURL_FORMS_PATH}"
 done
 
+:> "${STDERR}"
+:> "${STDOUT}"
+MOCKS_FLAGS=('--header' '-H')
+for MOCKS_FLAG in "${MOCKS_FLAGS[@]}"; do
+ MOCKS_CURL_HEADERS_PATH="$(mktemp)"
+ MOCKS_HEADERS=()
+ EXPECTED_TEXT=''
+ MOCKS_HEADERS+=("${MOCKS_FLAG}" "${MOCKS_DATAS[0]}")
+ EXPECTED_TEXT="${EXPECTED_TEXT}${MOCKS_DATAS[0]}"
+ for (( i=1; i<${#MOCKS_DATAS[@]}; i++ )); do
+  MOCKS_HEADERS+=("${MOCKS_FLAG}" "${MOCKS_DATAS[i]}")
+  EXPECTED_TEXT="${EXPECTED_TEXT}"$'\n'"${MOCKS_DATAS[i]}"
+ done
+ PATH="src/main/bash/curl/bin:${PATH}" \
+ MOCKS_CURL_HEADERS_PATH="${MOCKS_CURL_HEADERS_PATH}" \
+  curl "${MOCKS_HEADERS[@]}" >"${STDOUT}" 2>"${STDERR}"
+ . $asserts/strings/eq.sh "${SCRIPT}" "$?" '0'
+ . $asserts/files/empty.sh "${STDERR}"
+ . $asserts/files/empty.sh "${STDOUT}"
+ . $asserts/strings/eq.sh "${SCRIPT}" "$(<"${MOCKS_CURL_HEADERS_PATH}")" "${EXPECTED_TEXT}"
+ rm "${MOCKS_CURL_HEADERS_PATH}"
+done
+
 rm "${STDERR}"
 rm "${STDOUT}"
