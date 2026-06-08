@@ -38,18 +38,21 @@ if [[ -n "${MOCKS_CURL_DATA_PATH}" ]]; then
  printf '%s' "${MOCKS_CURL_DATA}" > "${MOCKS_CURL_DATA_PATH}" || exit 1; fi
 
 if [[ -n "${MOCKS_CURL_FORM_STRINGS_PATH}" ]]; then
+ [[ -f "${MOCKS_CURL_FORM_STRINGS_PATH}" ]] && exit 1
  for MOCKS_CURL_FORM_STRING in "${MOCKS_CURL_FORM_STRINGS[@]}"; do
   echo "${MOCKS_CURL_FORM_STRING}" >> "${MOCKS_CURL_FORM_STRINGS_PATH}" || exit 1
  done
 fi
 
 if [[ -n "${MOCKS_CURL_FORMS_PATH}" ]]; then
+ [[ -f "${MOCKS_CURL_FORMS_PATH}" ]] && exit 1
  for MOCKS_CURL_FORM in "${MOCKS_CURL_FORMS[@]}"; do
   echo "${MOCKS_CURL_FORM}" >> "${MOCKS_CURL_FORMS_PATH}" || exit 1
  done
 fi
 
 if [[ -n "${MOCKS_CURL_HEADERS_PATH}" ]]; then
+ [[ -f "${MOCKS_CURL_HEADERS_PATH}" ]] && exit 1
  for MOCKS_CURL_HEADER in "${MOCKS_CURL_HEADERS[@]}"; do
   echo "${MOCKS_CURL_HEADER}" >> "${MOCKS_CURL_HEADERS_PATH}" || exit 1
  done

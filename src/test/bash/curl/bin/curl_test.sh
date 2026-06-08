@@ -217,6 +217,7 @@ for (( i=1; i<${#MOCKS_DATAS[@]}; i++ )); do
  EXPECTED_TEXT="${EXPECTED_TEXT}"$'\n'"${MOCKS_DATAS[i]}"
 done
 MOCKS_CURL_FORM_STRINGS_PATH="$(mktemp)"
+rm "${MOCKS_CURL_FORM_STRINGS_PATH}"
 :> "${STDERR}"
 :> "${STDOUT}"
 PATH="src/main/bash/curl/bin:${PATH}" \
@@ -233,6 +234,7 @@ rm "${MOCKS_CURL_FORM_STRINGS_PATH}"
 MOCKS_FLAGS=('--form' '-F')
 for MOCKS_FLAG in "${MOCKS_FLAGS[@]}"; do
  MOCKS_CURL_FORMS_PATH="$(mktemp)"
+ rm "${MOCKS_CURL_FORMS_PATH}"
  MOCKS_FORMS=()
  EXPECTED_TEXT=''
  MOCKS_FORMS+=("${MOCKS_FLAG}" "${MOCKS_DATAS[0]}")
@@ -256,6 +258,7 @@ done
 MOCKS_FLAGS=('--header' '-H')
 for MOCKS_FLAG in "${MOCKS_FLAGS[@]}"; do
  MOCKS_CURL_HEADERS_PATH="$(mktemp)"
+ rm "${MOCKS_CURL_HEADERS_PATH}"
  MOCKS_HEADERS=()
  EXPECTED_TEXT=''
  MOCKS_HEADERS+=("${MOCKS_FLAG}" "${MOCKS_DATAS[0]}")
