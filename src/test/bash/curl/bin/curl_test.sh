@@ -228,28 +228,28 @@ MOCKS_CURL_FORM_STRINGS_PATH="${MOCKS_CURL_FORM_STRINGS_PATH}" \
 . $asserts/strings/eq.sh "${SCRIPT}" "$(<"${MOCKS_CURL_FORM_STRINGS_PATH}")" "${EXPECTED_TEXT}"
 rm "${MOCKS_CURL_FORM_STRINGS_PATH}"
 
-echo 'Not implemented!'; exit 1 # todo
-
-DATAS=('' ' ' 'x' 42 '{"foo":"bar"}' $'\t' $'\n200' 'foo=bar' 'foo: bar' 'document=@"/foo/bar/baz.txt"')
-FORMS=()
-EXPECTED_TEXT=''
-FORMS+=(--form "${DATAS[0]}")
-EXPECTED_TEXT="${EXPECTED_TEXT}${DATAS[0]}"
-for (( i=1; i<${#DATAS[@]}; i++ )); do
- FORMS+=(--form "${DATAS[i]}")
- EXPECTED_TEXT="${EXPECTED_TEXT}"$'\n'"${DATAS[i]}"
-done
-MOCKS_CURL_FORMS_PATH="$(mktemp)"
 :> "${STDERR}"
 :> "${STDOUT}"
-PATH="src/main/bash/curl/bin:${PATH}" \
-MOCKS_CURL_FORMS_PATH="${MOCKS_CURL_FORMS_PATH}" \
- curl "${FORMS[@]}" >"${STDOUT}" 2>"${STDERR}"
-. $asserts/strings/eq.sh "${SCRIPT}" "$?" '0'
-. $asserts/files/empty.sh "${STDERR}"
-. $asserts/files/empty.sh "${STDOUT}"
-. $asserts/strings/eq.sh "${SCRIPT}" "$(<"${MOCKS_CURL_FORMS_PATH}")" "${EXPECTED_TEXT}"
-rm "${MOCKS_CURL_FORMS_PATH}"
+MOCKS_FLAGS=('--form' '-F')
+for MOCKS_FLAG in "${MOCKS_FLAGS[@]}"; do
+ MOCKS_CURL_FORMS_PATH="$(mktemp)"
+ MOCKS_FORMS=()
+ EXPECTED_TEXT=''
+ MOCKS_FORMS+=("${MOCKS_FLAG}" "${MOCKS_DATAS[0]}")
+ EXPECTED_TEXT="${EXPECTED_TEXT}${MOCKS_DATAS[0]}"
+ for (( i=1; i<${#MOCKS_DATAS[@]}; i++ )); do
+  MOCKS_FORMS+=("${MOCKS_FLAG}" "${MOCKS_DATAS[i]}")
+  EXPECTED_TEXT="${EXPECTED_TEXT}"$'\n'"${MOCKS_DATAS[i]}"
+ done
+ PATH="src/main/bash/curl/bin:${PATH}" \
+ MOCKS_CURL_FORMS_PATH="${MOCKS_CURL_FORMS_PATH}" \
+  curl "${MOCKS_FORMS[@]}" >"${STDOUT}" 2>"${STDERR}"
+ . $asserts/strings/eq.sh "${SCRIPT}" "$?" '0'
+ . $asserts/files/empty.sh "${STDERR}"
+ . $asserts/files/empty.sh "${STDOUT}"
+ . $asserts/strings/eq.sh "${SCRIPT}" "$(<"${MOCKS_CURL_FORMS_PATH}")" "${EXPECTED_TEXT}"
+ rm "${MOCKS_CURL_FORMS_PATH}"
+done
 
 rm "${STDERR}"
 rm "${STDOUT}"
