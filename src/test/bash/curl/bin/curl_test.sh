@@ -54,8 +54,8 @@ for MOCKS_CURL_HTTP_CODE in "${HTTP_CODES[@]}"; do
  . $asserts/strings/eq.sh "${SCRIPT}" "$(<"${STDOUT}")" "${MOCKS_CURL_HTTP_CODE}"
 done
 
-DATAS=('' ' ' 'x' 42 '{"foo":"bar"}' $'\t' $'\n200')
-for MOCKS_CURL_DST in "${DATAS[@]}"; do
+MOCKS_DATAS=('' ' ' 'x' 42 '{"foo":"bar"}' $'\t' $'\n200' 'foo=bar' 'foo: bar' 'document=@"/foo/bar/baz.txt"')
+for MOCKS_CURL_DST in "${MOCKS_DATAS[@]}"; do
  :> "${STDERR}"
  :> "${STDOUT}"
  PATH="src/main/bash/curl/bin:${PATH}" \
