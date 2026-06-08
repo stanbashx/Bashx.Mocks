@@ -32,10 +32,10 @@ for MOCKS_CURL_EXIT_CODE in "${EXIT_CODES[@]}"; do
  . $asserts/files/empty.sh "${STDOUT}"
 done
 
+:> "${STDERR}"
+:> "${STDOUT}"
 EXIT_CODES=(1 42 255)
 for MOCKS_CURL_EXIT_CODE in "${EXIT_CODES[@]}"; do
- :> "${STDERR}"
- :> "${STDOUT}"
  PATH="src/main/bash/curl/bin:${PATH}" \
  MOCKS_CURL_EXIT_CODE="${MOCKS_CURL_EXIT_CODE}" \
   curl >"${STDOUT}" 2>"${STDERR}"
@@ -81,8 +81,6 @@ MOCKS_CURL_DST='foo' \
 
 MOCKS_CURL_DATA_PATH="$(mktemp)"
 MOCKS_FLAGS=('--data' '-d')
-:> "${STDERR}"
-:> "${STDOUT}"
 for MOCKS_FLAG in "${MOCKS_FLAGS[@]}"; do
  for MOCKS_CURL_DATA in "${MOCKS_DATAS[@]}"; do
   PATH="src/main/bash/curl/bin:${PATH}" \
@@ -100,8 +98,6 @@ rm "${MOCKS_CURL_DATA_PATH}"
 
 MOCKS_CURL_DATA_PATH="$(mktemp)"
 MOCKS_FLAGS=('--data' '-d')
-:> "${STDERR}"
-:> "${STDOUT}"
 for MOCKS_FLAG in "${MOCKS_FLAGS[@]}"; do
  PATH="src/main/bash/curl/bin:${PATH}" \
   curl "${MOCKS_FLAG}" 'foo' >"${STDOUT}" 2>"${STDERR}"
@@ -115,8 +111,6 @@ rm "${MOCKS_CURL_DATA_PATH}"
 # MOCKS_CURL_DATA_PATH
 
 MOCKS_CURL_DATA_PATH="$(mktemp)"
-:> "${STDERR}"
-:> "${STDOUT}"
 PATH="src/main/bash/curl/bin:${PATH}" \
 MOCKS_CURL_DATA_PATH="${MOCKS_CURL_DATA_PATH}" \
  curl >"${STDOUT}" 2>"${STDERR}"
@@ -213,8 +207,6 @@ for (( i=1; i<${#MOCKS_DATAS[@]}; i++ )); do
 done
 MOCKS_CURL_FORM_STRINGS_PATH="$(mktemp)"
 rm "${MOCKS_CURL_FORM_STRINGS_PATH}"
-:> "${STDERR}"
-:> "${STDOUT}"
 PATH="src/main/bash/curl/bin:${PATH}" \
 MOCKS_CURL_FORM_STRINGS_PATH="${MOCKS_CURL_FORM_STRINGS_PATH}" \
  curl "${FORM_STRINGS[@]}" >"${STDOUT}" 2>"${STDERR}"
@@ -224,8 +216,6 @@ MOCKS_CURL_FORM_STRINGS_PATH="${MOCKS_CURL_FORM_STRINGS_PATH}" \
 . $asserts/strings/eq.sh "${SCRIPT}" "$(<"${MOCKS_CURL_FORM_STRINGS_PATH}")" "${EXPECTED_TEXT}"
 rm "${MOCKS_CURL_FORM_STRINGS_PATH}"
 
-:> "${STDERR}"
-:> "${STDOUT}"
 MOCKS_FLAGS=('--form' '-F')
 for MOCKS_FLAG in "${MOCKS_FLAGS[@]}"; do
  MOCKS_CURL_FORMS_PATH="$(mktemp)"
@@ -248,8 +238,6 @@ for MOCKS_FLAG in "${MOCKS_FLAGS[@]}"; do
  rm "${MOCKS_CURL_FORMS_PATH}"
 done
 
-:> "${STDERR}"
-:> "${STDOUT}"
 MOCKS_FLAGS=('--header' '-H')
 for MOCKS_FLAG in "${MOCKS_FLAGS[@]}"; do
  MOCKS_CURL_HEADERS_PATH="$(mktemp)"
