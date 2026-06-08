@@ -7,12 +7,12 @@ MOCKS_CURL_HEADERS=()
 if [[ $# -gt 1 ]]; then
  while [[ $# -gt 0 ]]; do
   case "$1" in
-   -o) MOCKS_CURL_DST_PATH="$2"; shift 2;;
-   -w) MOCKS_CURL_DST_FORMAT="$2"; shift 2;;
-   --data|-d) MOCKS_CURL_DATA="$2"; shift 2;;
-   --form-string) MOCKS_CURL_FORM_STRINGS+=("$2"); shift 2;;
-   --form|-F) MOCKS_CURL_FORMS+=("$2"); shift 2;;
-   --header|-H) MOCKS_CURL_HEADERS+=("$2"); shift 2;;
+   '-o') MOCKS_CURL_DST_PATH="$2"; shift 2;;
+   '-w') MOCKS_CURL_DST_FORMAT="$2"; shift 2;;
+   '--data'|'-d') MOCKS_CURL_DATA="$2"; shift 2;;
+   '--form-string') MOCKS_CURL_FORM_STRINGS+=("$2"); shift 2;;
+   '--form'|'-F') MOCKS_CURL_FORMS+=("$2"); shift 2;;
+   '--header'|'-H') MOCKS_CURL_HEADERS+=("$2"); shift 2;;
    *) shift;;
   esac
  done
@@ -36,7 +36,7 @@ if [[ -n "${MOCKS_CURL_DST_PATH}" ]]; then
  esac
 fi
 
-if [[ -n "${MOCKS_CURL_DATA}" && -n "${MOCKS_CURL_DATA_PATH}" ]]; then
+if [[ -n "${MOCKS_CURL_DATA_PATH}" ]]; then
  printf '%s' "${MOCKS_CURL_DATA}" > "${MOCKS_CURL_DATA_PATH}" || exit 1; fi
 
 if [[ -n "${MOCKS_CURL_FORM_STRINGS_PATH}" ]]; then
