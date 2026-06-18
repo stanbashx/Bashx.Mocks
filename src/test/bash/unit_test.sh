@@ -1,7 +1,7 @@
 #!/usr/local/bin/bash
 
 if [[ ! -d "${asserts}" ]]; then
- echo 'No asserts!'; exit 1; fi
+ echo 'No asserts!' >&2; exit 1; fi
 
 TESTS='src/test/bash'
 

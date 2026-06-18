@@ -1,0 +1,9 @@
+#!/usr/local/bin/bash
+
+if [[ -n "${MOCKS_CMP_EXIT_CODE}" ]]; then
+ if [[ "${MOCKS_CMP_EXIT_CODE}" =~ ^[1-9][0-9]*$ && ${MOCKS_CMP_EXIT_CODE} -lt 256 ]]; then
+  exit ${MOCKS_CMP_EXIT_CODE}
+ else
+  echo 'Wrong exit code!' >&2; exit 1
+ fi
+fi
