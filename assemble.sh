@@ -1,7 +1,7 @@
 #!/usr/local/bin/bash
 
-REP_OWNER='StanleyProjects'
-REP_NAME='Mocks'
+REP_OWNER='stanbashx'
+REP_NAME='Bashx.Mocks'
 VERSION='0.0.4'
 
 if [[ -d 'build' ]]; then
