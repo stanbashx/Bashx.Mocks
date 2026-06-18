@@ -7,5 +7,3 @@ if [[ -n "${MOCKS_CMP_EXIT_CODE}" ]]; then
   echo 'Wrong exit code!' >&2; exit 1
  fi
 fi
-
-printf '%s' "${MOCKS_CMP_SIZE}"
