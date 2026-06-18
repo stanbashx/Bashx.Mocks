@@ -2,12 +2,12 @@
 
 SCRIPT='src/main/bash/cmp/bin/cmp'
 
-echo "Running test of \"${SCRIPT}\"..."
+echo "Running test for \"${SCRIPT}\"..."
 
 . $asserts/files/execs.sh "${SCRIPT}"
 
 if ! /usr/local/bin/bash -n "${SCRIPT}"; then
- echo "\"${SCRIPT}\" has wrong syntax!" >&2; exit 1; fi
+ echo "\"${SCRIPT}\" has invalid syntax!" >&2; exit 1; fi
 
 STDOUT="$(mktemp)"
 STDERR="$(mktemp)"
