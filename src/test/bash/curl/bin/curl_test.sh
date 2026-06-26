@@ -19,8 +19,8 @@ STDERR="$(mktemp)"
 PATH="src/main/bash/curl/bin:${PATH}" \
  curl > "${STDOUT}" 2> "${STDERR}"
 . $asserts/ints/eq.sh "${SCRIPT}" "$?" 0
-. $asserts/files/empty.sh "${STDERR}"
 . $asserts/files/empty.sh "${STDOUT}"
+. $asserts/files/empty.sh "${STDERR}"
 
 EXIT_CODES=(0 256 'x' '01' $'0\n' '-1' '+1' ' 1' 2147483647)
 for MOCKS_CURL_EXIT_CODE in "${EXIT_CODES[@]}"; do
@@ -30,8 +30,8 @@ for MOCKS_CURL_EXIT_CODE in "${EXIT_CODES[@]}"; do
   MOCKS_CURL_EXIT_CODE="${MOCKS_CURL_EXIT_CODE}" \
   curl > "${STDOUT}" 2> "${STDERR}"
  . $asserts/ints/eq.sh "${SCRIPT}" "$?" 1
- . $asserts/files/equals.sh "${STDERR}" $'Wrong exit code!\n'
  . $asserts/files/empty.sh "${STDOUT}"
+ . $asserts/files/equals.sh "${STDERR}" $'Wrong exit code!\n'
 done
 
 EXIT_CODES=(1 42 255)
@@ -42,27 +42,33 @@ for MOCKS_CURL_EXIT_CODE in "${EXIT_CODES[@]}"; do
   MOCKS_CURL_EXIT_CODE="${MOCKS_CURL_EXIT_CODE}" \
   curl > "${STDOUT}" 2> "${STDERR}"
  . $asserts/ints/eq.sh "${SCRIPT}" "$?" "${MOCKS_CURL_EXIT_CODE}"
- . $asserts/files/empty.sh "${STDERR}"
  . $asserts/files/empty.sh "${STDOUT}"
+ . $asserts/files/empty.sh "${STDERR}"
 done
 
-echo 'Not implemented!'; exit 1 # todo
-
-MOCKS_DATAS=('' ' ' 'x' 42 '{"foo":"bar"}' $'\t' $'\n200' 'foo=bar' 'foo: bar' 'document=@"/foo/bar/baz.txt"')
-
-:> "${STDERR}"
-:> "${STDOUT}"
-HTTP_CODES=(0 200 500 'x' '01' '' ' ' $'\t' $'\n200')
+HTTP_CODES=(0 200 500 'x' '01' ' ' $'\t' $'\n200')
 for MOCKS_CURL_HTTP_CODE in "${HTTP_CODES[@]}"; do
  :> "${STDERR}"
  :> "${STDOUT}"
  PATH="src/main/bash/curl/bin:${PATH}" \
- MOCKS_CURL_HTTP_CODE="${MOCKS_CURL_HTTP_CODE}" \
-  curl -w '%{http_code}' >"${STDOUT}" 2>"${STDERR}"
- . $asserts/strings/eq.sh "${SCRIPT}" "$?" '0'
+  MOCKS_CURL_HTTP_CODE="${MOCKS_CURL_HTTP_CODE}" \
+  curl -w '%{http_code}' > "${STDOUT}" 2> "${STDERR}"
+ . $asserts/ints/eq.sh "${SCRIPT}" "$?" 0
+ . $asserts/files/equals.sh "${STDOUT}" "${MOCKS_CURL_HTTP_CODE}"
  . $asserts/files/empty.sh "${STDERR}"
- . $asserts/strings/eq.sh "${SCRIPT}" "$(<"${STDOUT}")" "${MOCKS_CURL_HTTP_CODE}"
 done
+
+:> "${STDERR}"
+:> "${STDOUT}"
+PATH="src/main/bash/curl/bin:${PATH}" \
+ curl -w '%{http_code}' > "${STDOUT}" 2> "${STDERR}"
+. $asserts/ints/eq.sh "${SCRIPT}" "$?" 0
+. $asserts/files/empty.sh "${STDOUT}"
+. $asserts/files/empty.sh "${STDERR}"
+
+echo 'Not implemented!'; exit 1 # todo
+
+MOCKS_DATAS=('' ' ' 'x' 42 '{"foo":"bar"}' $'\t' $'\n200' 'foo=bar' 'foo: bar' 'document=@"/foo/bar/baz.txt"')
 
 :> "${STDERR}"
 :> "${STDOUT}"
