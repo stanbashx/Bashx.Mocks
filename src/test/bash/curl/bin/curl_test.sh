@@ -71,7 +71,7 @@ for MOCKS_CURL_DST in "${MOCKS_DATAS[@]}"; do
  :> "${STDERR}"
  :> "${STDOUT}"
  PATH="src/main/bash/curl/bin:${PATH}" \
- MOCKS_CURL_DST="${MOCKS_CURL_DST}" \
+  MOCKS_CURL_DST="${MOCKS_CURL_DST}" \
   curl > "${STDOUT}" 2> "${STDERR}"
  . $asserts/ints/eq.sh "${SCRIPT}" "$?" 0
  . $asserts/files/equals.sh "${STDOUT}" "${MOCKS_CURL_DST}"
@@ -86,52 +86,50 @@ PATH="src/main/bash/curl/bin:${PATH}" \
 . $asserts/files/empty.sh "${STDOUT}"
 . $asserts/files/empty.sh "${STDERR}"
 
-echo 'Not implemented!'; exit 1 # todo
-
 :> "${STDERR}"
 :> "${STDOUT}"
 PATH="src/main/bash/curl/bin:${PATH}" \
-MOCKS_CURL_HTTP_CODE=200 \
-MOCKS_CURL_DST='foo' \
- curl -w 'bar' >"${STDOUT}" 2>"${STDERR}"
-. $asserts/strings/eq.sh "${SCRIPT}" "$?" '0'
-. $asserts/files/empty.sh "${STDERR}"
+ MOCKS_CURL_HTTP_CODE=200 \
+ MOCKS_CURL_DST='foo' \
+ curl -w 'bar' > "${STDOUT}" 2> "${STDERR}"
+. $asserts/ints/eq.sh "${SCRIPT}" "$?" 0
 . $asserts/files/empty.sh "${STDOUT}"
+. $asserts/files/empty.sh "${STDERR}"
 
 # MOCKS_CURL_DATA + MOCKS_CURL_DATA_PATH
 
-:> "${STDERR}"
-:> "${STDOUT}"
 MOCKS_FLAGS=('--data' '-d')
 for MOCKS_FLAG in "${MOCKS_FLAGS[@]}"; do
  for MOCKS_CURL_DATA in "${MOCKS_DATAS[@]}"; do
+  :> "${STDERR}"
+  :> "${STDOUT}"
   MOCKS_CURL_DATA_PATH="$(mktemp)"
   PATH="src/main/bash/curl/bin:${PATH}" \
-  MOCKS_CURL_DATA_PATH="${MOCKS_CURL_DATA_PATH}" \
-   curl "${MOCKS_FLAG}" "${MOCKS_CURL_DATA}" >"${STDOUT}" 2>"${STDERR}"
-  . $asserts/strings/eq.sh "${SCRIPT}" "$?" '0'
+   MOCKS_CURL_DATA_PATH="${MOCKS_CURL_DATA_PATH}" \
+   curl "${MOCKS_FLAG}" "${MOCKS_CURL_DATA}" > "${STDOUT}" 2> "${STDERR}"
+  . $asserts/ints/eq.sh "${SCRIPT}" "$?" 0
   . $asserts/files/empty.sh "${STDERR}"
   . $asserts/files/empty.sh "${STDOUT}"
-  . $asserts/strings/eq.sh "${SCRIPT}" "$(<"${MOCKS_CURL_DATA_PATH}")" "${MOCKS_CURL_DATA}"
+  . $asserts/files/equals.sh "${MOCKS_CURL_DATA_PATH}" "${MOCKS_CURL_DATA}"
   rm "${MOCKS_CURL_DATA_PATH}"
  done
 done
 
 # MOCKS_CURL_DATA
 
-:> "${STDERR}"
-:> "${STDOUT}"
-MOCKS_CURL_DATA_PATH="$(mktemp)"
 MOCKS_FLAGS=('--data' '-d')
 for MOCKS_FLAG in "${MOCKS_FLAGS[@]}"; do
+ :> "${STDERR}"
+ :> "${STDOUT}"
+ MOCKS_CURL_DATA_PATH="$(mktemp)"
  PATH="src/main/bash/curl/bin:${PATH}" \
-  curl "${MOCKS_FLAG}" 'foo' >"${STDOUT}" 2>"${STDERR}"
- . $asserts/strings/eq.sh "${SCRIPT}" "$?" '0'
+  curl "${MOCKS_FLAG}" 'foo' > "${STDOUT}" 2> "${STDERR}"
+ . $asserts/ints/eq.sh "${SCRIPT}" "$?" 0
  . $asserts/files/empty.sh "${STDERR}"
  . $asserts/files/empty.sh "${STDOUT}"
  . $asserts/files/empty.sh "${MOCKS_CURL_DATA_PATH}"
+ rm "${MOCKS_CURL_DATA_PATH}"
 done
-rm "${MOCKS_CURL_DATA_PATH}"
 
 # MOCKS_CURL_DATA_PATH
 
@@ -141,11 +139,13 @@ MOCKS_CURL_DATA_PATH="$(mktemp)"
 PATH="src/main/bash/curl/bin:${PATH}" \
 MOCKS_CURL_DATA_PATH="${MOCKS_CURL_DATA_PATH}" \
  curl > "${STDOUT}" 2> "${STDERR}"
-. $asserts/strings/eq.sh "${SCRIPT}" "$?" '0'
+. $asserts/ints/eq.sh "${SCRIPT}" "$?" 0
 . $asserts/files/empty.sh "${STDERR}"
 . $asserts/files/empty.sh "${STDOUT}"
 . $asserts/files/empty.sh "${MOCKS_CURL_DATA_PATH}"
 rm "${MOCKS_CURL_DATA_PATH}"
+
+echo 'Not implemented!'; exit 1 # todo
 
 # MOCKS_CURL_DST + MOCKS_CURL_DST_PATH
 
