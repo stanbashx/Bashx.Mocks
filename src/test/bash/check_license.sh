@@ -1,9 +1,9 @@
 #!/usr/local/bin/bash
 
-ISSUER='LICENSE'
-. $asserts/files/not_empty.sh "${ISSUER}"
+SUBJECT='LICENSE'
+. $asserts/files/not_empty.sh "${SUBJECT}"
 
 AUTHOR='Stanley Wintergreen'
 REGEX="Copyright 2[0-9]{3} ${AUTHOR}"
 
-. $asserts/files/regex.sh "${ISSUER}" "${REGEX}"
+. $asserts/files/regex.sh "${SUBJECT}" "${REGEX}"
