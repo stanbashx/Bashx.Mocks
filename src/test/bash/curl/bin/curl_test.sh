@@ -66,22 +66,27 @@ PATH="src/main/bash/curl/bin:${PATH}" \
 . $asserts/files/empty.sh "${STDOUT}"
 . $asserts/files/empty.sh "${STDERR}"
 
-echo 'Not implemented!'; exit 1 # todo
-
-MOCKS_DATAS=('' ' ' 'x' 42 '{"foo":"bar"}' $'\t' $'\n200' 'foo=bar' 'foo: bar' 'document=@"/foo/bar/baz.txt"')
-
-:> "${STDERR}"
-:> "${STDOUT}"
+MOCKS_DATAS=(' ' 'x' 42 '{"foo":"bar"}' $'\t' $'\n200' 'foo=bar' 'foo: bar' 'document=@"/foo/bar/baz.txt"')
 for MOCKS_CURL_DST in "${MOCKS_DATAS[@]}"; do
  :> "${STDERR}"
  :> "${STDOUT}"
  PATH="src/main/bash/curl/bin:${PATH}" \
  MOCKS_CURL_DST="${MOCKS_CURL_DST}" \
   curl > "${STDOUT}" 2> "${STDERR}"
- . $asserts/strings/eq.sh "${SCRIPT}" "$?" '0'
+ . $asserts/ints/eq.sh "${SCRIPT}" "$?" 0
+ . $asserts/files/equals.sh "${STDOUT}" "${MOCKS_CURL_DST}"
  . $asserts/files/empty.sh "${STDERR}"
- . $asserts/strings/eq.sh "${SCRIPT}" "$(<"${STDOUT}")" "${MOCKS_CURL_DST}"
 done
+
+:> "${STDERR}"
+:> "${STDOUT}"
+PATH="src/main/bash/curl/bin:${PATH}" \
+ curl > "${STDOUT}" 2> "${STDERR}"
+. $asserts/ints/eq.sh "${SCRIPT}" "$?" 0
+. $asserts/files/empty.sh "${STDOUT}"
+. $asserts/files/empty.sh "${STDERR}"
+
+echo 'Not implemented!'; exit 1 # todo
 
 :> "${STDERR}"
 :> "${STDOUT}"
