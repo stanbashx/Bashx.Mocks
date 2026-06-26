@@ -32,7 +32,7 @@ if [[ ${SCRIPTS_COUNT} -eq 0 ]]; then
 elif [[ ${COVERED_COUNT} -eq 0 ]]; then
  echo 'No scripts are covered!' >&2; exit 1
 elif [[ ${COVERED_COUNT} -eq ${SCRIPTS_COUNT} ]]; then
- echo 'All scripts are covered.'
+ echo 'All scripts covered.'
 else
  echo "Only $((COVERED_COUNT * 100 / SCRIPTS_COUNT))% of all scripts are covered!" >&2; exit 1
 fi
