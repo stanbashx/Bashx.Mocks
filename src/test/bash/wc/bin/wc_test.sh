@@ -22,12 +22,12 @@ PATH="src/main/bash/wc/bin:${PATH}" \
 . $asserts/files/empty.sh "${STDOUT}"
 . $asserts/files/empty.sh "${STDERR}"
 
-EXIT_CODES=(0 256 'x' '01' $'0\n')
+EXIT_CODES=(0 256 'x' '01' $'0\n' '-1' '+1' ' 1' -2147483648 -2147483649 2147483647 2147483648)
 for MOCKS_WC_EXIT_CODE in "${EXIT_CODES[@]}"; do
  :> "${STDERR}"
  :> "${STDOUT}"
  PATH="src/main/bash/wc/bin:${PATH}" \
- MOCKS_WC_EXIT_CODE="${MOCKS_WC_EXIT_CODE}" \
+  MOCKS_WC_EXIT_CODE="${MOCKS_WC_EXIT_CODE}" \
   wc > "${STDOUT}" 2> "${STDERR}"
  . $asserts/ints/eq.sh "${SCRIPT}" "$?" 1
  . $asserts/files/empty.sh "${STDOUT}"
@@ -39,7 +39,7 @@ for MOCKS_WC_EXIT_CODE in "${EXIT_CODES[@]}"; do
  :> "${STDERR}"
  :> "${STDOUT}"
  PATH="src/main/bash/wc/bin:${PATH}" \
- MOCKS_WC_EXIT_CODE="${MOCKS_WC_EXIT_CODE}" \
+  MOCKS_WC_EXIT_CODE="${MOCKS_WC_EXIT_CODE}" \
   wc > "${STDOUT}" 2> "${STDERR}"
  . $asserts/ints/eq.sh "${SCRIPT}" "$?" "${MOCKS_WC_EXIT_CODE}"
  . $asserts/files/empty.sh "${STDOUT}"

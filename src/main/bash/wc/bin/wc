@@ -1,6 +1,6 @@
 #!/usr/local/bin/bash
 
-if [[ -n "${MOCKS_WC_EXIT_CODE}" ]]; then
+if [[ -v MOCKS_WC_EXIT_CODE ]]; then
  if [[ "${MOCKS_WC_EXIT_CODE}" =~ ^[1-9][0-9]*$ && ${MOCKS_WC_EXIT_CODE} -lt 256 ]]; then
   exit ${MOCKS_WC_EXIT_CODE}
  else
