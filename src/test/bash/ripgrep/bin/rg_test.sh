@@ -22,7 +22,7 @@ PATH="src/main/bash/ripgrep/bin:${PATH}" \
 . $asserts/files/empty.sh "${STDOUT}"
 . $asserts/files/empty.sh "${STDERR}"
 
-EXIT_CODES=('' ' ' $'\n' $'\t' '-0' '0' '+0' '256' 'x' '01' $'0\n' '-1' ' 1' '+1'  -2147483648 -2147483649 2147483647 2147483648)
+EXIT_CODES=('' ' ' $'\n' $'\t' '-0' '0' '+0' '256' 'x' '01' $'0\n' '-1' ' 1' '+1' -2147483648 -2147483649 2147483647 2147483648)
 for MOCKS_RIPGREP_EXIT_CODE in "${EXIT_CODES[@]}"; do
  :> "${STDERR}"
  :> "${STDOUT}"
