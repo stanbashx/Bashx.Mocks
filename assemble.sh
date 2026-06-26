@@ -2,7 +2,7 @@
 
 REP_OWNER='stanbashx'
 REP_NAME='Bashx.Mocks'
-VERSION='0.0.4'
+VERSION='0.0.6'
 
 if [[ -d 'build' ]]; then
  echo 'Build dir exists!' >&2; exit 1; fi
