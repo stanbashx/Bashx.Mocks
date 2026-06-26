@@ -9,42 +9,46 @@ echo "Running test for \"${SCRIPT}\"..."
 if ! /usr/local/bin/bash -n "${SCRIPT}"; then
  echo "\"${SCRIPT}\" has invalid syntax!" >&2; exit 1; fi
 
-MOCKS_DATAS=('' ' ' 'x' 42 '{"foo":"bar"}' $'\t' $'\n200' 'foo=bar' 'foo: bar' 'document=@"/foo/bar/baz.txt"')
-
-STDERR="$(mktemp)"
 STDOUT="$(mktemp)"
+STDERR="$(mktemp)"
 
+#
+
+:> "${STDOUT}"
+:> "${STDERR}"
 PATH="src/main/bash/curl/bin:${PATH}" \
- curl >"${STDOUT}" 2>"${STDERR}"
-. $asserts/strings/eq.sh "${SCRIPT}" "$?" '0'
+ curl > "${STDOUT}" 2> "${STDERR}"
+. $asserts/ints/eq.sh "${SCRIPT}" "$?" 0
 . $asserts/files/empty.sh "${STDERR}"
 . $asserts/files/empty.sh "${STDOUT}"
 
-:> "${STDERR}"
-:> "${STDOUT}"
 EXIT_CODES=(0 256 'x' '01' $'0\n' '-1' '+1' ' 1' 2147483647)
 for MOCKS_CURL_EXIT_CODE in "${EXIT_CODES[@]}"; do
  :> "${STDERR}"
  :> "${STDOUT}"
  PATH="src/main/bash/curl/bin:${PATH}" \
- MOCKS_CURL_EXIT_CODE="${MOCKS_CURL_EXIT_CODE}" \
-  curl >"${STDOUT}" 2>"${STDERR}"
- . $asserts/strings/eq.sh "${SCRIPT}" "$?" '1'
- . $asserts/strings/eq.sh "${SCRIPT}" "$(<"${STDERR}")" 'Wrong exit code!'
+  MOCKS_CURL_EXIT_CODE="${MOCKS_CURL_EXIT_CODE}" \
+  curl > "${STDOUT}" 2> "${STDERR}"
+ . $asserts/ints/eq.sh "${SCRIPT}" "$?" 1
+ . $asserts/files/equals.sh "${STDERR}" $'Wrong exit code!\n'
  . $asserts/files/empty.sh "${STDOUT}"
 done
 
-:> "${STDERR}"
-:> "${STDOUT}"
 EXIT_CODES=(1 42 255)
 for MOCKS_CURL_EXIT_CODE in "${EXIT_CODES[@]}"; do
+ :> "${STDERR}"
+ :> "${STDOUT}"
  PATH="src/main/bash/curl/bin:${PATH}" \
- MOCKS_CURL_EXIT_CODE="${MOCKS_CURL_EXIT_CODE}" \
-  curl >"${STDOUT}" 2>"${STDERR}"
- . $asserts/strings/eq.sh "${SCRIPT}" "$?" "${MOCKS_CURL_EXIT_CODE}"
+  MOCKS_CURL_EXIT_CODE="${MOCKS_CURL_EXIT_CODE}" \
+  curl > "${STDOUT}" 2> "${STDERR}"
+ . $asserts/ints/eq.sh "${SCRIPT}" "$?" "${MOCKS_CURL_EXIT_CODE}"
  . $asserts/files/empty.sh "${STDERR}"
  . $asserts/files/empty.sh "${STDOUT}"
 done
+
+echo 'Not implemented!'; exit 1 # todo
+
+MOCKS_DATAS=('' ' ' 'x' 42 '{"foo":"bar"}' $'\t' $'\n200' 'foo=bar' 'foo: bar' 'document=@"/foo/bar/baz.txt"')
 
 :> "${STDERR}"
 :> "${STDOUT}"
@@ -67,7 +71,7 @@ for MOCKS_CURL_DST in "${MOCKS_DATAS[@]}"; do
  :> "${STDOUT}"
  PATH="src/main/bash/curl/bin:${PATH}" \
  MOCKS_CURL_DST="${MOCKS_CURL_DST}" \
-  curl >"${STDOUT}" 2>"${STDERR}"
+  curl > "${STDOUT}" 2> "${STDERR}"
  . $asserts/strings/eq.sh "${SCRIPT}" "$?" '0'
  . $asserts/files/empty.sh "${STDERR}"
  . $asserts/strings/eq.sh "${SCRIPT}" "$(<"${STDOUT}")" "${MOCKS_CURL_DST}"
@@ -125,7 +129,7 @@ rm "${MOCKS_CURL_DATA_PATH}"
 MOCKS_CURL_DATA_PATH="$(mktemp)"
 PATH="src/main/bash/curl/bin:${PATH}" \
 MOCKS_CURL_DATA_PATH="${MOCKS_CURL_DATA_PATH}" \
- curl >"${STDOUT}" 2>"${STDERR}"
+ curl > "${STDOUT}" 2> "${STDERR}"
 . $asserts/strings/eq.sh "${SCRIPT}" "$?" '0'
 . $asserts/files/empty.sh "${STDERR}"
 . $asserts/files/empty.sh "${STDOUT}"
@@ -155,7 +159,7 @@ done
 MOCKS_CURL_DST_PATH="$(mktemp)"
 PATH="src/main/bash/curl/bin:${PATH}" \
 MOCKS_CURL_DST='foo' \
- curl >"${STDOUT}" 2>"${STDERR}"
+ curl > "${STDOUT}" 2> "${STDERR}"
 . $asserts/strings/eq.sh "${SCRIPT}" "$?" '0'
 . $asserts/files/empty.sh "${STDERR}"
 . $asserts/strings/eq.sh "${SCRIPT}" "$(<"${STDOUT}")" 'foo'
