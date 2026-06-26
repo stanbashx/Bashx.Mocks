@@ -30,13 +30,16 @@ if [[ -n "${MOCKS_CURL_EXIT_CODE}" ]]; then
 fi
 
 if [[ -n "${MOCKS_CURL_DST_PATH}" ]]; then
- case "${MOCKS_CURL_DST_TYPE}" in
-  'file') touch "${MOCKS_CURL_DST_PATH}" || exit 1;;
-  'symlink') ln -s "${MOCKS_CURL_DST_PATH}" "${MOCKS_CURL_DST_PATH}" || exit 1;;
-  'dir') mkdir -p "${MOCKS_CURL_DST_PATH}" || exit 1;;
-  *) if [[ -n "${MOCKS_CURL_DST}" ]]; then
-   printf '%s' "${MOCKS_CURL_DST}" > "${MOCKS_CURL_DST_PATH}" || exit 1; fi;;
- esac
+ if [[ -v MOCKS_CURL_DST_TYPE ]]; then
+  case "${MOCKS_CURL_DST_TYPE}" in
+  'issue:empty_file') touch "${MOCKS_CURL_DST_PATH}" || exit 1;;
+  'issue:symlink') ln -s "${MOCKS_CURL_DST_PATH}" "${MOCKS_CURL_DST_PATH}" || exit 1;;
+  'issue:dir') mkdir -p "${MOCKS_CURL_DST_PATH}" || exit 1;;
+  *) echo "Dst type \"${MOCKS_CURL_DST_TYPE}\" is not supported!" >&2; exit 1;;
+  esac
+ elif [[ -n "${MOCKS_CURL_DST}" ]]; then
+  printf '%s' "${MOCKS_CURL_DST}" > "${MOCKS_CURL_DST_PATH}" || exit 1
+ fi
 fi
 
 if [[ -n "${MOCKS_CURL_DATA_PATH}" ]]; then
